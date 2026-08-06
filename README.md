@@ -1,3 +1,5 @@
+[Read in Persian / مطالعه به زبان فارسی](README.fa.md)
+
 # 🧠 BrainBox
 
 A secure desktop application built with Python for managing your passwords and notes.
