@@ -1,7 +1,4 @@
-"""
-ui/components.py
-کارت هوشمند برای نمایش آیتم — behavior متفاوت بر اساس item_type.
-"""
+
 
 from __future__ import annotations
 import customtkinter as ctk
@@ -17,7 +14,7 @@ class ItemCard(ctk.CTkFrame):
         master,
         item_id: int,
         title: str,
-        content: str,          # برای password: plaintext واقعی
+        content: str,          
         item_type: str,
         tags: str = "",
         on_delete: callable = None,
@@ -39,7 +36,7 @@ class ItemCard(ctk.CTkFrame):
 
         self.grid_columnconfigure(0, weight=1)
 
-        # ── عنوان ──
+        
         self.title_lbl = ctk.CTkLabel(
             self, text=title,
             font=ctk.CTkFont(family="B Nazanin", size=16, weight="bold"),
@@ -58,7 +55,7 @@ class ItemCard(ctk.CTkFrame):
             self.tags_lbl.grid(row=1, column=0, columnspan=3,
                                padx=12, pady=(0, 4), sticky="ew")
 
-        # ── محتوا / دکمه‌ها ──
+        
         row = 2
         if item_type == "password":
             self.pwd_lbl = ctk.CTkLabel(
@@ -91,7 +88,7 @@ class ItemCard(ctk.CTkFrame):
             )
             self.open_btn.grid(row=row, column=1, padx=6, pady=6)
 
-        else:  # note
+        else:  
             self.note_lbl = ctk.CTkLabel(
                 self, text=content,
                 font=ctk.CTkFont(family="B Nazanin", size=13),
@@ -100,7 +97,7 @@ class ItemCard(ctk.CTkFrame):
             self.note_lbl.grid(row=row, column=0, columnspan=2,
                                padx=12, pady=6, sticky="ew")
 
-        # ── دکمه حذف ──
+        
         self.del_btn = ctk.CTkButton(
             self, text="delet", width=40,
             font=ctk.CTkFont(size=13),
@@ -110,7 +107,7 @@ class ItemCard(ctk.CTkFrame):
         )
         self.del_btn.grid(row=row, column=2, padx=6, pady=6)
 
-    # ──────────────────────────────────────────────
+   
     def _copy_password(self) -> None:
         pyperclip.copy(self.content_text)
         self.copy_btn.configure(text="کپی شد")
