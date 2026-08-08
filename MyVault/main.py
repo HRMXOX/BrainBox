@@ -1,12 +1,8 @@
-"""
-main.py
-نقطه ورود MyVault. فقط UI را run می‌کند.
-"""
 
 import sys
 from pathlib import Path
 
-# مطمئن شویم import از پوشه پروژه کار می‌کند
+
 sys.path.insert(0, str(Path(__file__).parent))
 
 import customtkinter as ctk
