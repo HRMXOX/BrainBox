@@ -1,7 +1,3 @@
-"""
-ui/login_window.py
-پنجره لاگین — ساخت پسورد اولین بار یا ورود.
-"""
 
 from __future__ import annotations
 import customtkinter as ctk
@@ -10,7 +6,7 @@ from core.security import SecurityVault
 
 
 class LoginWindow(ctk.CTkToplevel):
-    """پنجره لاگین modal. اگر master password هنوز تنظیم نشده، setup می‌کند."""
+    
 
     def __init__(self, master, security: SecurityVault, on_success: callable):
         super().__init__(master)
@@ -22,7 +18,7 @@ class LoginWindow(ctk.CTkToplevel):
         self.resizable(False, False)
         self.configure(fg_color=("#f5f5f5", "#181818"))
 
-        # modal
+        
         self.transient(master)
         self.grab_set()
 
