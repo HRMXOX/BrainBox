@@ -1,12 +1,4 @@
-"""
-ui/app_window.py
-پنجره اصلی MyVault:
-  - سایدبار دسته‌بندی‌ها (راست)
-  - هدر با نوار جستجو و دکمه افزودن
-  - بخش اصلی با اسکرول + کارت‌ها
-  - قفل خودکار بعد از ۵ دقیقه idle
-  - خروجی رمزنگاری‌شده backup
-"""
+
 
 from __future__ import annotations
 import json
@@ -24,8 +16,8 @@ from ui.components import ItemCard
 from ui.login_window import LoginWindow
 
 
-IDLE_TIMEOUT_MS = 5 * 60 * 1000   # ۵ دقیقه
-HEX_KEY = 0       # modifier برای binding
+IDLE_TIMEOUT_MS = 5 * 60 * 1000   
+HEX_KEY = 0       
 APP_FONT = ("B Nazanin", 13)
 
 
@@ -48,18 +40,16 @@ class MainWindow(ctk.CTk):
         self._build_ui()
         self._bind_idle_events()
 
-        # اگر اولین بار است، setup می‌کند؛ در غیر این صورت lock می‌ماند تا ورود
+      
         self.after(100, self._ensure_unlocked)
-        self.after(10_000, self._check_idle)   # هر ۱۰ ثانیه چک کن
+        self.after(10_000, self._check_idle)     
 
-    # ══════════════════════════════════════════════
-    # ساخت UI
-    # ══════════════════════════════════════════════
+ 
     def _build_ui(self) -> None:
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
-        # ── هدر (راست‌چین) ──
+    
         header = ctk.CTkFrame(self, fg_color=("#eaeaea", "#222222"),
                               corner_radius=0, height=64)
         header.grid(row=0, column=0, sticky="ew")
@@ -79,14 +69,14 @@ class MainWindow(ctk.CTk):
         )
         self.add_btn.grid(row=0, column=2, padx=(0, 10), pady=12)
 
-        # ── بدنه (sidebar سمت راست + content وسط) ──
+ 
         body = ctk.CTkFrame(self, fg_color="transparent")
         body.grid(row=1, column=0, sticky="nsew")
         body.grid_columnconfigure(0, weight=1)
         body.grid_columnconfigure(1, weight=0)
         body.grid_rowconfigure(0, weight=1)
 
-        # content در column 0 (وسط/راست به دلیل RTL حس داده می‌شود)
+
         self.content_frame = ctk.CTkScrollableFrame(
             body, label_text="",
             fg_color=("#f9f9f9", "#1a1a1a"),
@@ -94,7 +84,7 @@ class MainWindow(ctk.CTk):
         self.content_frame.grid(row=0, column=0, sticky="nsew", padx=(6, 0))
         self.content_frame.grid_columnconfigure(0, weight=1)
 
-        # sidebar سمت راست (column 1)
+  
         self.sidebar = ctk.CTkScrollableFrame(
             body, width=200, label_text="دسته‌بندی‌ها",
             fg_color=("#f0f0f0", "#242424"),
@@ -102,7 +92,7 @@ class MainWindow(ctk.CTk):
         self.sidebar.grid(row=0, column=1, sticky="ns", padx=(0, 6))
         self.sidebar.grid_columnconfigure(0, weight=1)
 
-        # ── نوار پایین با دکمه backup و lock ──
+       
         footer = ctk.CTkFrame(self, height=40, fg_color=("#e0e0e0", "#1f1f1f"),
                               corner_radius=0)
         footer.grid(row=2, column=0, sticky="ew")
@@ -124,7 +114,7 @@ class MainWindow(ctk.CTk):
         for w in self.sidebar.winfo_children():
             w.destroy()
         cats = self.db.list_categories()
-        # دکمه "همه"
+   
         all_btn = ctk.CTkButton(
             self.sidebar, text="🗂 همه",
             font=APP_FONT, height=32,
@@ -146,9 +136,7 @@ class MainWindow(ctk.CTk):
             )
             btn.pack(fill="x", padx=4, pady=4)
 
-    # ══════════════════════════════════════════════
-    # منطق نمایش
-    # ══════════════════════════════════════════════
+
     def _select_category(self, cat_id: int | None) -> None:
         self._current_category_id = cat_id
         if cat_id is None:
@@ -179,7 +167,7 @@ class MainWindow(ctk.CTk):
             return
         for it in items:
             content = it["content"]
-            # اگر password است و security unlock شده، decrypt کن
+     
             if it["item_type"] == "password" and self.security.is_unlocked():
                 try:
                     content = self.security.decrypt_text(it["content"])
@@ -201,9 +189,7 @@ class MainWindow(ctk.CTk):
             self.db.delete_item(item_id)
             self._on_search()
 
-    # ══════════════════════════════════════════════
-    # افزودن آیتم (dialog ساده)
-    # ══════════════════════════════════════════════
+    
     def _open_add_dialog(self) -> None:
         if not self.security.is_unlocked():
             self._ensure_unlocked()
@@ -223,7 +209,7 @@ class MainWindow(ctk.CTk):
         cat_names = [f"{c['icon']} {c['name']}" for c in cats]
         cat_ids = [c["id"] for c in cats]
 
-        # type
+        
         type_var = ctk.StringVar(value="note")
         ctk.CTkLabel(dlg, text="نوع:", font=APP_FONT).pack(anchor="e", padx=20)
         type_seg = ctk.CTkSegmentedButton(
@@ -232,7 +218,7 @@ class MainWindow(ctk.CTk):
         )
         type_seg.pack(fill="x", padx=20, pady=4)
 
-        # category
+        
         ctk.CTkLabel(dlg, text="دسته‌بندی:", font=APP_FONT).pack(anchor="e",
                                                                    padx=20, pady=(8, 0))
         cat_var = ctk.StringVar(value=cat_names[0] if cat_names else "")
@@ -240,20 +226,20 @@ class MainWindow(ctk.CTk):
                                     font=APP_FONT)
         cat_menu.pack(fill="x", padx=20, pady=4)
 
-        # title
+        
         ctk.CTkLabel(dlg, text="عنوان", font=APP_FONT).pack(anchor="e", padx=20,
                                                                pady=(8, 0))
         title_entry = ctk.CTkEntry(dlg, font=APP_FONT, justify="right")
         title_entry.pack(fill="x", padx=20, pady=4)
 
-        # content
+        
         ctk.CTkLabel(dlg, text="محتوا", font=APP_FONT).pack(anchor="e", padx=20,
                                                               pady=(8, 0))
         content_box = ctk.CTkTextbox(dlg, font=APP_FONT, height=120,
                                     wrap="word")
         content_box.pack(fill="both", expand=True, padx=20, pady=4)
 
-        # tags
+        
         ctk.CTkLabel(dlg, text="تگ‌ها:", font=APP_FONT).pack(anchor="e",
                                                                         padx=20, pady=(8, 0))
         tags_entry = ctk.CTkEntry(dlg, font=APP_FONT, justify="right")
@@ -265,7 +251,7 @@ class MainWindow(ctk.CTk):
             if not title or not content:
                 return
             tp = type_var.get()
-            # اگر password است، قبل از ذخیره encrypt کن
+            
             if tp == "password":
                 content = self.security.encrypt_text(content)
             idx = cat_names.index(cat_var.get()) if cat_var.get() in cat_names else 0
@@ -281,9 +267,7 @@ class MainWindow(ctk.CTk):
         ctk.CTkButton(dlg, text="save", font=APP_FONT, command=save
                       ).pack(pady=10)
 
-    # ══════════════════════════════════════════════
-    # قفل خودکار + Unlock
-    # ══════════════════════════════════════════════
+   
     def _bind_idle_events(self) -> None:
         """reset تایمر هر activity‌ای."""
         for seq in ("<Motion>", "<Key>", "<Button>", "<ButtonRelease>"):
@@ -298,7 +282,7 @@ class MainWindow(ctk.CTk):
         return time.time() * 1000
 
     def _check_idle(self) -> None:
-        # اگر unlock شده و تغییرات اخیر نبوده → قفل کن
+        
         if self.security.is_unlocked():
             idle = self._now_ms() - max(self._last_activity_ts, 0)
             if idle >= IDLE_TIMEOUT_MS:
@@ -310,7 +294,7 @@ class MainWindow(ctk.CTk):
 
     def _do_lock(self) -> None:
         self.security.lock()
-        self._render_items([])   # محتوا را پاک کن
+        self._render_items([])   
         self._ensure_unlocked()
 
     def _ensure_unlocked(self) -> None:
@@ -322,9 +306,7 @@ class MainWindow(ctk.CTk):
         self._last_activity_ts = self._now_ms()
         self._select_category(None)
 
-    # ══════════════════════════════════════════════
-    # Backup
-    # ══════════════════════════════════════════════
+
     def _do_backup(self) -> None:
         if not self.security.is_unlocked():
             messagebox.showwarning("قفل", "ابتدا وارد شوید.")
@@ -338,16 +320,14 @@ class MainWindow(ctk.CTk):
             return
         try:
             data = self.db.export_plaintext_dict()
-            # تمام password ها را decrypt کن تا backup انسانی باشد
+            
             for item in data["items"]:
                 if item["item_type"] == "password":
                     try:
                         item["content"] = self.security.decrypt_text(item["content"])
                     except ValueError:
                         pass
-            # اگر پسورد master برای zip بپرسیم بهتر است؛ اینجا با رمز master
-            # zip رمزنگاری نمی‌کنیم چون master در memory است؛ اما فایل را با
-            # کلید مستقل از master در آینده می‌توان رمزنگاری کرد.
+
             if path.endswith(".zip"):
                 with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as zf:
                     zf.writestr("vault_export.json",
@@ -359,7 +339,7 @@ class MainWindow(ctk.CTk):
         except Exception as e:
             messagebox.showerror("خطا", str(e))
 
-    # ══════════════════════════════════════════════
+    
     def destroy(self):
         try:
             self.db.close()
